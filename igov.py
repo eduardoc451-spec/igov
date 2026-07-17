@@ -1005,34 +1005,24 @@ def mostrar_formulario_gov():
     re = sys.modules['re']
     # =========================================================================
 
-    init_db()
-    total_pts, res_data, ano_sel = render_sidebar()
-    
-    st.markdown("""
-        <style>
-        .quesito-card {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-left: 6px solid #1e3a5f;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
-    st.title(f"📊 Auditoria i-Gov TI - {ano_sel}")
-    
-    aba_quest, aba_graf = st.tabs(["📋 Questionário", "📈 Gráficos"])
-    
-    with aba_quest:
-        # Veja se o seu erro estava aqui para baixo:
-        # Se a linha "st.header("1.0 Estrutura de TIC")" estiver aqui dentro, 
-        # ela PRECISA ter 8 espaços de recuo (2 tabs) por estar dentro do "with aba_quest:"
-        st.write("Conteúdo do questionário aqui...")
-
-        # --- SEÇÃO 1: INFRAESTRUTURA E SETOR ---
-        st.header("1.0 Estrutura de TIC")
+    def init_db():
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS respostas (
+                    id TEXT NOT NULL,
+                    ano INTEGER NOT NULL,
+                    valor TEXT,
+                    pontos REAL DEFAULT 0,
+                    link TEXT,
+                    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (id, ano)
+                )
+            """)
+            # Agora sim, corretamente indentado dentro do cursor e da conexão
+            cursor.execute("ALTER TABLE respostas ADD COLUMN IF NOT EXISTS comentarios TEXT")
+        conn.commit()
         
         # =============================================================================
         # QUESITO 1.0 • SETOR DE TIC (100% INDEPENDENTE COM 8 ESPAÇOS DE INDENTAÇÃO)
