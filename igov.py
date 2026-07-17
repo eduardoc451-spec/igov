@@ -1,9 +1,9 @@
 import re
 import streamlit as st
-import sqlite3
 import json
 from io import BytesIO
 from datetime import datetime, date
+import psycopg2
 
 # =============================================================================
 # BIBLIOTECAS PARA O PDF (ReportLab)
