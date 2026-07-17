@@ -363,4 +363,17 @@ def get_all_years_data():
         
     return all_data
 
+def mostrar_formulario_gov():
+    import streamlit as st
+    
+    st.title("📊 Questionário i-Gov TI")
+    st.write("Bem-vindo ao formulário de Governança de Tecnologia da Informação.")
+    
+    # Aqui você pode construir as perguntas do seu formulário
+    # Exemplo simples:
+    opcao = st.radio("A instituição possui Plano Diretor de TI (PDTI)?", ["Sim", "Não"])
+    
+    if st.button("Salvar Respostas"):
+        st.success("Dados salvos com sucesso!")
+
 
