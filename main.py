@@ -396,26 +396,6 @@ def dimension_page():
     elif dimension == "i-Gov TI":
         if igov:
             try:
-                igov.mostrar_formulario_gov()
-            except Exception as e:
-                st.error("❌ Erro crítico dentro da função 'mostrar_formulario_gov()':")
-                st.exception(e)
-        else:
-            st.error("❌ O módulo 'igov.py' falhou no carregamento inicial (retornou None). Abra o arquivo 'igov.py' e verifique se há bibliotecas em falta, indentações incorretas ou erros de digitação globais.")
-
-    elif dimension == "i-Amb":
-        if iamb:
-            try:
-                iamb.mostrar_formulario_amb()
-            except Exception as e:
-                st.error("❌ Erro de execução dentro de i-Amb:")
-                st.exception(e)
-
-
-    elif dimension == "i-Gov TI":
-        if igov:
-            try:
-                # Tenta variações comuns de nome de função
                 if hasattr(igov, 'mostrar_formulario_gov'):
                     igov.mostrar_formulario_gov()
                 elif hasattr(igov, 'mostrar_formulario_igov'):
@@ -425,10 +405,9 @@ def dimension_page():
                 elif hasattr(igov, 'main'):
                     igov.main()
                 else:
-                    # Se não achar nenhuma, lista na tela o que tem dentro do arquivo para você ver
                     funcoes_disponiveis = [f for f in dir(igov) if not f.startswith('_')]
-                    st.error(f"❌ A função 'mostrar_formulario_gov' não existe no arquivo 'igov.py'.")
-                    st.write("🔍 **Funções e variáveis encontradas dentro do seu igov.py:**")
+                    st.error("❌ A função 'mostrar_formulario_gov' não existe no arquivo 'igov.py'.")
+                    st.write("🔍 **Funções encontradas dentro do seu igov.py para você corrigir:**")
                     st.code(str(funcoes_disponiveis))
             except Exception as e:
                 st.error("❌ Erro crítico de execução dentro do módulo i-Gov TI:")
@@ -436,6 +415,13 @@ def dimension_page():
         else:
             st.error("❌ O módulo 'igov.py' falhou no carregamento inicial.")
 
+    elif dimension == "i-Amb":
+        if iamb:
+            try:
+                iamb.mostrar_formulario_amb()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Amb:")
+                st.exception(e)
         else:
             st.error("❌ O arquivo 'iamb.py' falhou no carregamento inicial.")
 
