@@ -328,7 +328,7 @@ def dashboard_page():
         st.markdown('</div></div>', unsafe_allow_html=True)
 
 def dimension_page():
-    """Página de exibição dinâmica."""
+    """Página de exibição dinâmica com tratamento de erros robusto."""
     st.markdown("<script>setTimeout(function() { window.scrollTo(0, 0); }, 100);</script>", unsafe_allow_html=True)
     
     dimension = st.session_state.selected_dimension
@@ -349,12 +349,16 @@ def dimension_page():
 
     st.markdown("---")
 
-    # Roteamento central das subpáginas do ecossistema
+    # =========================================================================
+    # ROTEAMENTO CENTRAL DAS SUBPÁGINAS DO ECOSSISTEMA
+    # =========================================================================
+    
     if dimension == "Administrador":
         if admin_core:
             admin_core.mostrar_painel_admin(year)
         else:
             st.error("Erro técnico: O arquivo 'administrador.py' não foi detectado no sistema.")
+            
     elif dimension == "Biblioteca":
         st.subheader("📁 Biblioteca de Evidências e Documentos do IEG-M")
         if bib_core:
@@ -362,7 +366,7 @@ def dimension_page():
         else:
             st.error("Erro: Módulo 'biblioteca.py' não localizado.")
             
-   # --- Bloco dinâmico do HAL 9000 buscando de hal.py ---
+    # --- Bloco dinâmico do HAL 9000 buscando de hal.py ---
     elif dimension == "HAL 9000":
         st.subheader("🔴 HAL 9000 — Inteligência Artificial")
         if hal_core:
@@ -377,34 +381,78 @@ def dimension_page():
             st.error("Erro técnico: O arquivo 'hal.py' não foi detectado no sistema.")
             st.chat_input("Como posso ajudar hoje? (Modo Offline)")
             
-    elif dimension == "i-Cidade" and icidade:
-        icidade.init_db()
-        icidade.mostrar_formulario_cidade()
+    # --- ROTEAMENTO DAS DIMENSÕES (COM ALERTAS EXPLICÍTOS EM CASO DE FALHA DE IMPORTAÇÃO) ---
+    elif dimension == "i-Cidade":
+        if icidade:
+            try:
+                icidade.init_db()
+                icidade.mostrar_formulario_cidade()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Cidade:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'icidade_completo.py' ou 'icidade.py' falhou na importação inicial. Verifique se há erros de sintaxe ou dependências faltando dentro dele.")
 
-    # --- CORRIGIDO: Bloco do i-Gov TI Blindado contra Crashes Ocultos ---
-    elif dimension == "i-Gov TI" and igov:
-        try:
-            igov.mostrar_formulario_gov()
-        except KeyError as e:
-            st.error(f"❌ Erro de Chave (KeyError): A questão **{e}** está sendo chamada no formulário, mas falta no dicionário de pontuações.")
-            st.info("💡 Como resolver: Verifique se essa chave existe no seu dicionário `PONTUACOES_MAX`.")
-        except psycopg2.Error as e:
-            st.error("❌ Erro no Banco de Dados (PostgreSQL):")
-            st.code(str(e))
-        except Exception as e:
-            st.error("❌ Ocorreu um erro inesperado dentro de `mostrar_formulario_gov()`:")
-            st.exception(e)
+    elif dimension == "i-Gov TI":
+        if igov:
+            try:
+                igov.mostrar_formulario_gov()
+            except Exception as e:
+                st.error("❌ Erro crítico dentro da função 'mostrar_formulario_gov()':")
+                st.exception(e)
+        else:
+            st.error("❌ O módulo 'igov.py' falhou no carregamento inicial (retornou None). Abra o arquivo 'igov.py' e verifique se há bibliotecas em falta, indentações incorretas ou erros de digitação globais.")
 
-    elif dimension == "i-Amb" and iamb:
-        iamb.mostrar_formulario_amb()
-    elif dimension == "i-Fiscal" and ifiscal:
-        ifiscal.mostrar_formulario_ifiscal()
-    elif dimension == "i-Plan" and iplan:
-        iplan.mostrar_formulario_plan()
-    elif dimension == "i-Educ" and ieduc:
-        ieduc.mostrar_formulario_educ()
-    elif dimension == "i-Saúde" and isaude:
-        isaude.mostrar_formulario_saude()
+    elif dimension == "i-Amb":
+        if iamb:
+            try:
+                iamb.mostrar_formulario_amb()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Amb:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'iamb.py' falhou no carregamento inicial.")
+
+    elif dimension == "i-Fiscal":
+        if ifiscal:
+            try:
+                ifiscal.mostrar_formulario_ifiscal()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Fiscal:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'ifiscal.py' falhou no carregamento inicial.")
+
+    elif dimension == "i-Plan":
+        if iplan:
+            try:
+                iplan.mostrar_formulario_plan()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Plan:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'iplan.py' não pôde ser carregado.")
+
+    elif dimension == "i-Educ":
+        if ieduc:
+            try:
+                ieduc.mostrar_formulario_educ()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Educ:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'ieduc.py' não pôde ser carregado.")
+
+    elif dimension == "i-Saúde":
+        if isaude:
+            try:
+                isaude.mostrar_formulario_saude()
+            except Exception as e:
+                st.error("❌ Erro de execução dentro de i-Saúde:")
+                st.exception(e)
+        else:
+            st.error("❌ O arquivo 'isaude.py' não pôde ser carregado.")
+
     elif dimension == "ieg-m":
         if iegm_final:
             iegm_final.mostrar_painel_iegm_final(year)
@@ -448,7 +496,7 @@ def dimension_page():
         else:
             st.error("Erro técnico: O arquivo 'treinamento.py' não foi detectado no sistema.")
             
-    # --- CORRIGIDO: Nome exato correspondente ao card "Prazos e Instruções de Preenchimento" ---
+    # --- Nome correspondente ao card "Prazos e Instruções de Preenchimento" ---
     elif dimension == "Prazos e Instruções de Preenchimento":
         st.subheader("⏰ Prazos e Instruções de Preenchimento")
         if prazos_alertas:
@@ -465,3 +513,15 @@ def dimension_page():
             
     else:
         st.info(f"Módulo {dimension} pronto para integração.")
+
+# Gerenciador de Estado de Telas do Streamlit
+if not st.session_state.authenticated:
+    login_page()
+else:
+    if st.session_state.needs_password_change:
+        change_password_page()
+    elif st.session_state.current_page == "dashboard":
+        dashboard_page()
+    elif st.session_state.current_page == "dimension":
+        dimension_page()
+
