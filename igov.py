@@ -72,10 +72,12 @@ import psycopg2 # Certifique-se de adicionar 'psycopg2-binary' no seu requiremen
 
 def get_connection():
     """
-    Estabelece a conexão com o banco de dados PostgreSQL.
-    Recomenda-se configurar as credenciais no arquivo .streamlit/secrets.toml
+    Estabelece a conexão com o banco de dados PostgreSQL usando a URL do Neon.
     """
-    return psycopg2.connect(
+    # Busca a URL completa configurada nos Secrets do Streamlit
+    connection_string = st.secrets["postgres"]["url"]
+    
+    return psycopg2.connect(connection_string)
         host=st.secrets.get("postgres", {}).get("host", "localhost"),
         database=st.secrets.get("postgres", {}).get("database", "dados_igov_ti"),
         user=st.secrets.get("postgres", {}).get("user", "postgres"),
