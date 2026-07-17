@@ -65,14 +65,20 @@ def modal_aviso_link(qid, links_encontrados):
 # =============================================================================
 # 1. FUNÇÕES DE APOIO E BANCO DE DADOS
 # =============================================================================
-import sqlite3
+import sqlite3  # Você pode remover esta linha se não for mais usar o SQLite
 import json
 import datetime
 import streamlit as st
 import psycopg2
 
 def get_connection():
-    return sqlite3.connect("dados_igov_ti.db", check_same_thread=False)
+    return psycopg2.connect(
+        host=st.secrets["postgres"]["host"],
+        database=st.secrets["postgres"]["database"],
+        user=st.secrets["postgres"]["user"],
+        password=st.secrets["postgres"]["password"],
+        port=st.secrets["postgres"]["port"]
+    )
 
 def init_db():
     with get_connection() as conn:
