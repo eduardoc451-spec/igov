@@ -410,6 +410,32 @@ def dimension_page():
             except Exception as e:
                 st.error("❌ Erro de execução dentro de i-Amb:")
                 st.exception(e)
+
+
+    elif dimension == "i-Gov TI":
+        if igov:
+            try:
+                # Tenta variações comuns de nome de função
+                if hasattr(igov, 'mostrar_formulario_gov'):
+                    igov.mostrar_formulario_gov()
+                elif hasattr(igov, 'mostrar_formulario_igov'):
+                    igov.mostrar_formulario_igov()
+                elif hasattr(igov, 'mostrar_formulario'):
+                    igov.mostrar_formulario()
+                elif hasattr(igov, 'main'):
+                    igov.main()
+                else:
+                    # Se não achar nenhuma, lista na tela o que tem dentro do arquivo para você ver
+                    funcoes_disponiveis = [f for f in dir(igov) if not f.startswith('_')]
+                    st.error(f"❌ A função 'mostrar_formulario_gov' não existe no arquivo 'igov.py'.")
+                    st.write("🔍 **Funções e variáveis encontradas dentro do seu igov.py:**")
+                    st.code(str(funcoes_disponiveis))
+            except Exception as e:
+                st.error("❌ Erro crítico de execução dentro do módulo i-Gov TI:")
+                st.exception(e)
+        else:
+            st.error("❌ O módulo 'igov.py' falhou no carregamento inicial.")
+
         else:
             st.error("❌ O arquivo 'iamb.py' falhou no carregamento inicial.")
 
@@ -525,27 +551,4 @@ else:
     elif st.session_state.current_page == "dimension":
         dimension_page()
 
-elif dimension == "i-Gov TI":
-        if igov:
-            try:
-                # Tenta variações comuns de nome de função
-                if hasattr(igov, 'mostrar_formulario_gov'):
-                    igov.mostrar_formulario_gov()
-                elif hasattr(igov, 'mostrar_formulario_igov'):
-                    igov.mostrar_formulario_igov()
-                elif hasattr(igov, 'mostrar_formulario'):
-                    igov.mostrar_formulario()
-                elif hasattr(igov, 'main'):
-                    igov.main()
-                else:
-                    # Se não achar nenhuma, lista na tela o que tem dentro do arquivo para você ver
-                    funcoes_disponiveis = [f for f in dir(igov) if not f.startswith('_')]
-                    st.error(f"❌ A função 'mostrar_formulario_gov' não existe no arquivo 'igov.py'.")
-                    st.write("🔍 **Funções e variáveis encontradas dentro do seu igov.py:**")
-                    st.code(str(funcoes_disponiveis))
-            except Exception as e:
-                st.error("❌ Erro crítico de execução dentro do módulo i-Gov TI:")
-                st.exception(e)
-        else:
-            st.error("❌ O módulo 'igov.py' falhou no carregamento inicial.")
 
