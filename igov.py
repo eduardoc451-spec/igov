@@ -69,6 +69,7 @@ import sqlite3
 import json
 import datetime
 import streamlit as st
+import psycopg2
 
 def get_connection():
     return sqlite3.connect("dados_igov_ti.db", check_same_thread=False)
