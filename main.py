@@ -362,7 +362,7 @@ def dimension_page():
         else:
             st.error("Erro: Módulo 'biblioteca.py' não localizado.")
             
-    # --- Bloco dinâmico do HAL 9000 buscando de hal.py ---
+   # --- Bloco dinâmico do HAL 9000 buscando de hal.py ---
     elif dimension == "HAL 9000":
         st.subheader("🔴 HAL 9000 — Inteligência Artificial")
         if hal_core:
@@ -380,8 +380,21 @@ def dimension_page():
     elif dimension == "i-Cidade" and icidade:
         icidade.init_db()
         icidade.mostrar_formulario_cidade()
+
+    # --- CORRIGIDO: Bloco do i-Gov TI Blindado contra Crashes Ocultos ---
     elif dimension == "i-Gov TI" and igov:
-        igov.mostrar_formulario_gov()
+        try:
+            igov.mostrar_formulario_gov()
+        except KeyError as e:
+            st.error(f"❌ Erro de Chave (KeyError): A questão **{e}** está sendo chamada no formulário, mas falta no dicionário de pontuações.")
+            st.info("💡 Como resolver: Verifique se essa chave existe no seu dicionário `PONTUACOES_MAX`.")
+        except psycopg2.Error as e:
+            st.error("❌ Erro no Banco de Dados (PostgreSQL):")
+            st.code(str(e))
+        except Exception as e:
+            st.error("❌ Ocorreu um erro inesperado dentro de `mostrar_formulario_gov()`:")
+            st.exception(e)
+
     elif dimension == "i-Amb" and iamb:
         iamb.mostrar_formulario_amb()
     elif dimension == "i-Fiscal" and ifiscal:
@@ -452,14 +465,3 @@ def dimension_page():
             
     else:
         st.info(f"Módulo {dimension} pronto para integração.")
-
-# Gerenciador de Estado de Telas do Streamlit
-if not st.session_state.authenticated:
-    login_page()
-else:
-    if st.session_state.needs_password_change:
-        change_password_page()
-    elif st.session_state.current_page == "dashboard":
-        dashboard_page()
-    elif st.session_state.current_page == "dimension":
-        dimension_page()
