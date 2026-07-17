@@ -86,9 +86,12 @@ def get_connection():
     )
 
 def init_db():
-    with get_connection() as conn:
+    # Iniciamos a conexão limpa
+    conn = None
+    try:
+        conn = get_connection()
         with conn.cursor() as cursor:
-            # No Postgres, criamos a tabela garantindo a chave primária composta
+            # Criamos a tabela se não existir
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS respostas (
                     id TEXT NOT NULL,
@@ -99,8 +102,24 @@ def init_db():
                     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     PRIMARY KEY (id, ano)
-                )
+                );
             """)
+            
+            # Tenta adicionar a coluna 'comentarios' caso ela não exista de migrações antigas
+            try:
+                cursor.execute("ALTER TABLE respostas ADD COLUMN IF NOT EXISTS comentarios TEXT;")
+            except Exception:
+                pass
+                
+        # Garante o salvamento físico no Neon
+        conn.commit()
+        
+    except Exception as e:
+        st.error(f"Erro crítico na inicialização do banco de dados: {e}")
+    finally:
+        # O pulo do gato para o PostgreSQL: fechar a conexão explicitamente no final
+        if conn:
+            conn.close()
             
             # Tenta adicionar a coluna de comentários se ela não existir
             try:
