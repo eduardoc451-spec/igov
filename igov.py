@@ -65,7 +65,6 @@ def modal_aviso_link(qid, links_encontrados):
 # =============================================================================
 # 1. FUNÇÕES DE APOIO E BANCO DE DADOS
 # =============================================================================
-import sqlite3  # Você pode remover esta linha se não for mais usar o SQLite
 import json
 import datetime
 import streamlit as st
