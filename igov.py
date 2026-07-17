@@ -76,3 +76,19 @@ def modal_aviso_link(qid, links_encontrados):
     """)
     if st.button("Confirmo que o link está liberado para o público", key=f"btn_conf_{qid}"):
         st.rerun()
+
+# =============================================================================
+# DECORATOR DE SEGURANÇA PARA PEGAR O ERRO OCULTO (ADICIONADO)
+# =============================================================================
+def diagnosticar_erros(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            st.error("🚨 Um erro aconteceu dentro do formulário!")
+            st.code(f"Tipo do erro: {type(e).__name__}\nDetalhes: {str(e)}")
+            st.exception(e)
+    return wrapper
+
+# ATENÇÃO: Vá até a linha onde diz "def mostrar_formulario_gov():" 
+# e adicione "@diagnosticar_erros" logo na linha de cima dela!
