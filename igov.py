@@ -94,11 +94,9 @@ def init_db():
                 PRIMARY KEY (id, ano)
             )
         """)
-        try:
-            cursor.execute("ALTER TABLE respostas ADD COLUMN comentarios TEXT")
-        except sqlite3.OperationalError:
-            pass
-        conn.commit()
+        # O Postgres já resolve o problema nativamente se a coluna existir
+cursor.execute("ALTER TABLE respostas ADD COLUMN IF NOT EXISTS comentarios TEXT")
+conn.commit()
 
 def load_respostas(ano):
     dados_ano = {}
