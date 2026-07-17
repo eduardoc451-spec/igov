@@ -996,7 +996,8 @@ def render_sidebar():
     return total_pts, res_data, ano_sel
 
 
-    def mostrar_formulario_gov():
+def mostrar_formulario_gov():
+    import re
     # =========================================================================
     # CORREÇÃO CRÍTICA PARA CONFLITO DE ESCOPO DO 're' (UNBOUNDLOCALERROR)
     # =========================================================================
